@@ -1,0 +1,6 @@
+{
+  "name": "EasyPOS",
+  "description": "A responsive web-based point-of-sale system built with Vue.js, Tailwind CSS, and Phosphor Icons.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
