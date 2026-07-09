@@ -5,11 +5,83 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EasyPOS - Web Kasir Modern</title>
+
   <!-- Phosphor Icons CDN -->
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
-  <!-- Tailwind CSS via CDN so the app can run directly without npm install -->
+
+  <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="./src/index.css" />
+
+  <!-- Vue 3 Global CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <style>
+    [v-cloak] {
+      display: none;
+    }
+
+    .animate-bounce {
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .animate-in {
+      animation: zoomIn 0.3s ease-out forwards;
+    }
+
+    @keyframes zoomIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .slide-in-from-top-1 {
+      animation: slideDown 0.3s ease-out forwards;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
 </head>
 
 <body class="bg-[#F1F5F9] text-slate-800 antialiased min-h-screen">
@@ -21,11 +93,9 @@
       <div
         class="bg-white/95 backdrop-blur-md rounded-3xl w-full max-w-md shadow-2xl p-8 border border-white/20 flex flex-col gap-6 relative overflow-hidden">
 
-        <!-- Decorative Background Blobs -->
         <div class="absolute -top-12 -right-12 w-32 h-32 bg-[#D9EFFF] rounded-full blur-2xl opacity-60"></div>
         <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-[#1452B9]/10 rounded-full blur-2xl opacity-60"></div>
 
-        <!-- Logo & Header -->
         <div class="text-center flex flex-col items-center gap-2 relative z-10">
           <div
             class="w-16 h-16 bg-[#1452B9] text-white rounded-2xl flex items-center justify-center text-3xl shadow-lg border border-white/10">
@@ -35,22 +105,18 @@
           <p class="text-xs text-slate-500 font-medium">Point of Sale</p>
         </div>
 
-        <!-- Login Form -->
-        <form @submit.prevent="handleLogin" class="flex flex-col gap-4 relative z-10" id="login-form">
-          <!-- Username Input -->
+        <form @submit.prevent="handleLogin" class="flex flex-col gap-4 relative z-10">
           <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Nama Pengguna (Username)</label>
+            <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Nama Pengguna</label>
             <div class="relative">
               <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
                 <i class="ph-bold ph-user text-lg"></i>
               </span>
               <input type="text" v-model="loginUsername" required placeholder=""
-                class="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium text-sm focus:border-[#1452B9] focus:bg-white focus:ring-1 focus:ring-[#D9EFFF] outline-none transition-all"
-                id="login-username" />
+                class="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium text-sm focus:border-[#1452B9] focus:bg-white focus:ring-1 focus:ring-[#D9EFFF] outline-none transition-all" />
             </div>
           </div>
 
-          <!-- Password Input -->
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Kata Sandi (Password)</label>
             <div class="relative">
@@ -58,22 +124,18 @@
                 <i class="ph-bold ph-lock text-lg"></i>
               </span>
               <input type="password" v-model="loginPassword" required placeholder=""
-                class="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium text-sm focus:border-[#1452B9] focus:bg-white focus:ring-1 focus:ring-[#D9EFFF] outline-none transition-all"
-                id="login-password" />
+                class="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-medium text-sm focus:border-[#1452B9] focus:bg-white focus:ring-1 focus:ring-[#D9EFFF] outline-none transition-all" />
             </div>
           </div>
 
-          <!-- Error message container -->
           <div v-if="loginError"
             class="bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 text-xs font-medium flex items-center gap-2">
             <i class="ph-bold ph-warning-circle text-base"></i>
             <span>{{ loginError }}</span>
           </div>
 
-          <!-- Submit Button -->
           <button type="submit" :disabled="isLoggingIn"
-            class="w-full py-3.5 mt-2 bg-[#1452B9] hover:bg-[#0f3fa0] disabled:bg-[#1452B9]/50 text-white font-bold text-sm rounded-xl transition-all shadow-md shadow-blue-900/10 hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer"
-            id="login-submit-btn">
+            class="w-full py-3.5 mt-2 bg-[#1452B9] hover:bg-[#0f3fa0] disabled:bg-[#1452B9]/50 text-white font-bold text-sm rounded-xl transition-all shadow-md shadow-blue-900/10 hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer">
             <span v-if="isLoggingIn"
               class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
             <span v-else>Masuk</span>
@@ -86,44 +148,38 @@
     <!-- ================= MAIN APPLICATION LAYOUT ================= -->
     <div v-else class="flex flex-col h-screen overflow-hidden">
 
-      <!-- Top Navbar (Fixed / Sticky) -->
+      <!-- Top Navbar -->
       <header
         class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 shadow-xs shrink-0 z-40">
         <div class="flex items-center gap-4">
-          <!-- Logo EasyPOS -->
           <span class="text-2xl font-extrabold tracking-tight text-[#1452B9] flex items-center gap-2">
             EasyPOS
           </span>
-          <!-- Vertical Divider -->
           <div class="h-6 w-[1px] bg-slate-200 hidden md:block"></div>
-          <!-- App Header Info -->
           <div class="hidden md:flex flex-col">
             <h1 class="text-lg font-bold text-slate-900 leading-tight">{{ activePage }}</h1>
             <p class="text-xs text-slate-500 font-medium">Rumah makan Ibu</p>
           </div>
         </div>
-
         <div class="flex items-center gap-4">
-          <!-- Active Page Mobile Title -->
           <div class="md:hidden flex flex-col text-right">
             <h1 class="text-sm font-bold text-slate-900">{{ activePage }}</h1>
             <p class="text-[10px] text-slate-500 font-medium">Rumah makan Ibu</p>
           </div>
-          <!-- Hamburger Toggle Button -->
           <button @click="toggleSidebar"
-            class="p-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors focus:outline-none"
-            id="hamburger-btn">
+            class="p-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors focus:outline-none">
             <i class="ph-bold ph-list text-2xl"></i>
           </button>
         </div>
       </header>
 
       <!-- Main Layout Body -->
-      <div class="flex-1 flex relative overflow-hidden">
+      <div class="flex-1 min-h-0 flex relative overflow-hidden">
 
         <!-- Backdrop Overlay for Mobile Sidebar -->
         <div v-if="isSidebarOpen && isMobile" @click="toggleSidebar"
-          class="fixed inset-0 bg-black/40 z-45 backdrop-blur-xs transition-opacity duration-300"></div>
+          class="fixed inset-0 bg-black/40 z-45 backdrop-blur-xs transition-opacity duration-300">
+        </div>
 
         <!-- Left Sidebar Navigation -->
         <aside :class="[
@@ -132,60 +188,55 @@
             isSidebarOpen ? 'w-64' : 'w-0 overflow-hidden p-0 border-none'
           ]" class="overflow-y-auto">
 
-          <!-- Navigation List -->
           <div class="p-4 flex flex-col gap-2">
             <button @click="setActivePage('Beranda')" :class="[
                 'w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-200 text-left',
                 activePage === 'Beranda' ? 'bg-white/20 text-white shadow-xs' : 'text-blue-100 hover:bg-white/10 hover:text-white'
-              ]" id="nav-beranda">
+              ]">
               <i class="ph-bold ph-house text-xl"></i>
               <span>Beranda</span>
             </button>
-
             <button @click="setActivePage('Kasir')" :class="[
                 'w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-200 text-left',
                 activePage === 'Kasir' ? 'bg-white/20 text-white shadow-xs' : 'text-blue-100 hover:bg-white/10 hover:text-white'
-              ]" id="nav-kasir">
+              ]">
               <i class="ph-bold ph-calculator text-xl"></i>
               <span>Kasir</span>
             </button>
-
             <button @click="setActivePage('Laporan')" :class="[
                 'w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-200 text-left',
                 activePage === 'Laporan' ? 'bg-white/20 text-white shadow-xs' : 'text-blue-100 hover:bg-white/10 hover:text-white'
-              ]" id="nav-laporan">
+              ]">
               <i class="ph-bold ph-chart-bar text-xl"></i>
               <span>Laporan</span>
             </button>
-
             <button @click="openAccountModal" :class="[
                 'w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-200 text-left',
                 isAccountModalOpen ? 'bg-white/20 text-white shadow-xs' : 'text-blue-100 hover:bg-white/10 hover:text-white'
-              ]" id="nav-akun">
+              ]">
               <i class="ph-bold ph-user text-xl"></i>
               <span>Akun</span>
             </button>
           </div>
 
-          <!-- Logout Button at Bottom -->
+          <!-- ===== TOMBOL LOGOUT YANG SUDAH DIPERBAIKI ===== -->
+          <!-- Tombol Logout -->
           <div class="p-4 border-t border-white/10">
-            <button @click="logout"
-              class="w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-sm text-red-200 hover:bg-red-500/20 hover:text-white transition-all duration-200 text-left"
-              id="nav-logout">
+            <button @click="openLogoutModal"
+              class="w-full flex items-center gap-4 px-4 py-3 rounded-xl font-semibold text-sm text-red-200 hover:bg-red-500/20 hover:text-white transition-all duration-200 text-left">
               <i class="ph-bold ph-sign-out text-xl"></i>
               <span>Keluar</span>
             </button>
           </div>
         </aside>
-
-        <!-- Main Workspace (Central + Right Side Grid) -->
+        <!-- Main Workspace -->
         <main :class="[
-            'flex-1 h-full overflow-hidden flex flex-col lg:flex-row min-w-0 bg-[#F8FAFC] transition-all duration-300',
+            'flex-1 h-full overflow-hidden flex flex-col lg:flex-row min-w-0 min-h-0 bg-[#F8FAFC] transition-all duration-300',
             isMobile ? 'pl-0' : (isSidebarOpen ? 'lg:pl-64' : 'lg:pl-0')
           ]">
 
-          <!-- Central Content Area (Active screen view) -->
-          <div class="flex-1 h-full p-4 sm:p-6 overflow-y-auto">
+          <!-- Central Content Area -->
+          <div class="flex-1 min-h-0 h-full p-4 sm:p-6 overflow-y-auto">
 
             <!-- ================= VIEW: KASIR ================= -->
             <div v-if="activePage === 'Kasir'" class="flex flex-col gap-6">
@@ -195,14 +246,14 @@
                 <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                   <div class="flex flex-wrap gap-3">
                     <button @click="toggleDeleteMode" :class="[
-                      'inline-flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-bold transition duration-200',
+                      'inline-flex items-center gap-2 rounded-[10px] px-4 py-2 text-sm font-bold transition duration-200',
                       isDeleteMode ? 'bg-red-600 text-white' : 'bg-white text-red-600 border border-red-200 hover:bg-red-50'
                     ]">
                       <i class="ph-bold ph-trash"></i>
                       <span>{{ isDeleteMode ? 'Batal Hapus' : 'Hapus Menu' }}</span>
                     </button>
                     <button @click="openAddMenuModal"
-                      class="inline-flex items-center gap-2 rounded-2xl bg-[#1452B9] px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-[#0f3fa0] transition duration-200">
+                      class="inline-flex items-center gap-2 rounded-[10px] bg-[#1452B9] px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-[#0f3fa0] transition duration-200">
                       <i class="ph-bold ph-plus"></i>
                       <span>Tambah Menu</span>
                     </button>
@@ -210,13 +261,13 @@
                 </div>
               </div>
 
-              <div class="rounded-[32px] bg-[#F7FBFF] border border-blue-100 p-6 shadow-sm">
-                <div class="grid gap-6 lg:grid-cols-[2.4fr_1fr]">
-
+              <!-- Daftar Menu -->
+              <div class="rounded-[32px] bg-[#F7FBFF] border border-blue-100 p-4 shadow-sm">
+                <div class="w-full">
                   <div class="space-y-5">
                     <div class="flex flex-wrap items-center gap-3">
                       <button v-for="cat in categories" :key="cat" @click="activeCategory = cat" :class="[
-                        'rounded-full border px-5 py-2 text-sm font-semibold transition duration-200',
+                        'rounded-[10px] border px-5 py-2 text-sm font-semibold transition duration-200',
                         activeCategory === cat 
                           ? 'bg-[#1452B9] text-white border-transparent' 
                           : 'bg-white text-slate-700 border border-slate-200 hover:border-slate-300'
@@ -225,21 +276,32 @@
                       </button>
                     </div>
 
-                    <div v-if="filteredMenus.length > 0"
-                      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+                    <div v-if="filteredMenus.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <!-- ==================================================== -->
+                      <!-- PERBAIKAN: Fungsi Hapus Menu dengan Popup Konfirmasi -->
+                      <!-- ==================================================== -->
                       <div v-for="menu in filteredMenus" :key="menu.id"
                         @click="isDeleteMode ? confirmDeleteMenu(menu) : addToCart(menu)" :class="[
-                          'cursor-pointer overflow-hidden rounded-[32px] border border-slate-200/70 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl w-[200px]',
-                          isDeleteMode ? 'hover:border-red-400' : ''
+                          'cursor-pointer overflow-hidden rounded-2xl border bg-white shadow-sm hover:shadow-xl transition-all duration-200',
+                          isDeleteMode ? 'border-red-300 hover:border-red-500 hover:bg-red-50/50' : 'border-slate-200 hover:border-blue-300'
                         ]">
-                        <div class="h-[200px] w-full overflow-hidden bg-slate-100">
+                        <div class="aspect-[4/3] w-full overflow-hidden bg-slate-100">
                           <img :src="menu.image" :alt="menu.name"
-                            class="h-full w-full object-cover transition duration-500 hover:scale-105"
-                            referrerpolicy="no-referrer" />
+                            class="h-full w-full object-cover transition duration-500 hover:scale-105" />
                         </div>
-                        <div class="p-3 text-center">
-                          <h3 class="text-sm font-bold text-slate-900 truncate">{{ menu.name }}</h3>
-                          <p class="mt-2 text-xs font-bold text-[#1452B9]">{{ formatRupiah(menu.price) }}</p>
+                        <div class="px-4 py-4 text-center">
+                          <h3 class="text-base font-bold text-slate-900 truncate">
+                            {{ menu.name }}
+                          </h3>
+                          <p class="mt-2 text-base font-bold text-[#1452B9]">
+                            {{ formatRupiah(menu.price) }}
+                          </p>
+                          <!-- Indikator Mode Hapus -->
+                          <div v-if="isDeleteMode"
+                            class="mt-2 text-xs font-bold text-red-500 flex items-center justify-center gap-1">
+                            <i class="ph-bold ph-trash"></i>
+                            <span>Klik untuk hapus</span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -250,17 +312,13 @@
                       <p class="mt-2 text-sm">Silakan tambahkan menu baru untuk tampil di daftar kasir.</p>
                     </div>
                   </div>
-
-                  <div class="hidden lg:block"></div>
                 </div>
               </div>
             </div>
 
             <!-- ================= VIEW: BERANDA ================= -->
             <div v-if="activePage === 'Beranda'" class="flex flex-col gap-6">
-              <!-- Three Stat Cards (Image 1 Style match) -->
               <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Stat Card 1: Total Menu -->
                 <div
                   class="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-xs flex items-center gap-5 hover:border-blue-200 hover:shadow-md transition-all duration-300">
                   <div
@@ -272,8 +330,6 @@
                     <span class="text-2xl font-extrabold text-slate-900 mt-1">{{ menus.length }}</span>
                   </div>
                 </div>
-
-                <!-- Stat Card 2: Total Pesanan -->
                 <div
                   class="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-xs flex items-center gap-5 hover:border-purple-200 hover:shadow-md transition-all duration-300">
                   <div
@@ -285,8 +341,6 @@
                     <span class="text-2xl font-extrabold text-slate-900 mt-1">{{ totalTransactionsToday }}</span>
                   </div>
                 </div>
-
-                <!-- Stat Card 3: Total Pendapatan -->
                 <div
                   class="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-xs flex items-center gap-5 hover:border-emerald-200 hover:shadow-md transition-all duration-300">
                   <div
@@ -301,7 +355,6 @@
                 </div>
               </div>
 
-              <!-- Transaction Report Table (Image 1 Style match) -->
               <div class="bg-white rounded-3xl border border-slate-200/60 shadow-xs overflow-hidden">
                 <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
                   <h3 class="font-extrabold text-slate-900 text-base">Laporan Transaksi</h3>
@@ -328,10 +381,8 @@
                         class="hover:bg-slate-50/50 transition-colors">
                         <td class="py-3.5 px-6 font-bold text-slate-900">{{ tx.id }}</td>
                         <td class="py-3.5 px-6 text-slate-500 text-xs">{{ tx.date }}</td>
-                        <td class="py-3.5 px-6 text-center font-bold text-slate-800">
-                          {{ tx.items && tx.items.length > 0 ? tx.items.reduce((acc, item) => acc + item.quantity, 0) :
-                          1 }}
-                        </td>
+                        <td class="py-3.5 px-6 text-center font-bold text-slate-800">{{ tx.items && tx.items.length > 0
+                          ? tx.items.reduce((acc, item) => acc + item.quantity, 0) : 1 }}</td>
                         <td class="py-3.5 px-6 font-bold text-slate-900">{{ formatRupiah(tx.amount) }}</td>
                         <td class="py-3.5 px-6">
                           <span class="px-2.5 py-1 text-[10px] font-bold uppercase rounded-full" :class="{
@@ -344,9 +395,7 @@
                         </td>
                         <td class="py-3.5 px-6 text-center">
                           <span
-                            class="px-3 py-0.5 bg-[#DCFCE7] text-[#15803D] text-[10px] font-bold rounded-full border border-[#BBF7D0]">
-                            Selesai
-                          </span>
+                            class="px-3 py-0.5 bg-[#DCFCE7] text-[#15803D] text-[10px] font-bold rounded-full border border-[#BBF7D0]">Selesai</span>
                         </td>
                       </tr>
                       <tr v-if="transactionHistory.length === 0">
@@ -359,11 +408,10 @@
                   </table>
                 </div>
               </div>
+            </div>
 
-            </div> <!-- ================= VIEW: LAPORAN ================= -->
+            <!-- ================= VIEW: LAPORAN ================= -->
             <div v-if="activePage === 'Laporan'" class="flex flex-col gap-6">
-
-              <!-- List of Completed Transactions in Laporan Screen -->
               <div class="bg-white rounded-3xl border border-slate-200/60 shadow-xs overflow-hidden">
                 <div
                   class="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white">
@@ -377,14 +425,11 @@
                     </p>
                   </div>
                   <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto shrink-0">
-                    <!-- Inline Date Picker Filter (Matches request: filter yang muncul tanggal nya) -->
                     <div class="flex items-center gap-2">
                       <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Tanggal:</span>
                       <input type="date" v-model="laporanSelectedDate" @change="laporanFilterType = 'Tanggal'"
                         class="px-3 py-2 bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-700 text-xs font-bold rounded-xl transition-all shadow-2xs outline-none focus:border-[#1452B9] focus:ring-1 focus:ring-blue-100 cursor-pointer" />
                     </div>
-
-                    <!-- All Days Option Button -->
                     <button @click="laporanFilterType = (laporanFilterType === 'Semua' ? 'Tanggal' : 'Semua')" :class="[
                           'px-3.5 py-2 text-xs font-bold rounded-xl border transition-all cursor-pointer',
                           laporanFilterType === 'Semua' 
@@ -393,8 +438,6 @@
                         ]">
                       Semua Hari
                     </button>
-
-                    <!-- Cetak Laporan Button (Matches Image 2 blue-bordered style) -->
                     <button @click="printLaporan"
                       class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border-2 border-[#1452B9] text-[#1452B9] hover:bg-[#D9EFFF]/20 text-xs font-black rounded-xl transition-all shadow-2xs cursor-pointer">
                       <i class="ph-bold ph-printer text-base"></i>
@@ -419,10 +462,8 @@
                         class="hover:bg-slate-50/40 transition-colors">
                         <td class="py-3.5 px-6 font-bold text-slate-900">{{ tx.id }}</td>
                         <td class="py-3.5 px-6 text-slate-500 text-xs font-mono">{{ tx.date }}</td>
-                        <td class="py-3.5 px-6 text-center font-bold text-slate-800">
-                          {{ tx.items && tx.items.length > 0 ? tx.items.reduce((acc, item) => acc + item.quantity, 0) :
-                          1 }}
-                        </td>
+                        <td class="py-3.5 px-6 text-center font-bold text-slate-800">{{ tx.items && tx.items.length > 0
+                          ? tx.items.reduce((acc, item) => acc + item.quantity, 0) : 1 }}</td>
                         <td class="py-3.5 px-6 font-extrabold text-slate-900">{{ formatRupiah(tx.amount) }}</td>
                         <td class="py-3.5 px-6 text-center">
                           <span class="px-2.5 py-1 text-[10px] font-bold uppercase rounded-full" :class="{
@@ -435,9 +476,7 @@
                         </td>
                         <td class="py-3.5 px-6 text-center">
                           <span
-                            class="px-3 py-0.5 bg-[#DCFCE7] text-[#15803D] text-[10px] font-bold rounded-full border border-[#BBF7D0]">
-                            Selesai
-                          </span>
+                            class="px-3 py-0.5 bg-[#DCFCE7] text-[#15803D] text-[10px] font-bold rounded-full border border-[#BBF7D0]">Selesai</span>
                         </td>
                       </tr>
                       <tr v-if="filteredTransactionsHistory.length === 0">
@@ -452,19 +491,16 @@
               </div>
             </div>
 
-
-
           </div>
 
-          <!-- RIGHT PANEL: DETAILED SLIDE-DRAWER FOR "KERANJANG" OR "PEMBAYARAN" -->
-          <!-- We show this panel only when the active page is 'Kasir' -->
+          <!-- ================= RIGHT PANEL (KERANJANG / PEMBAYARAN) ================= -->
           <div v-if="activePage === 'Kasir'" :class="[
-              'w-full lg:w-[420px] xl:w-[480px] h-full bg-[#EFF8FF] border-t lg:border-t-0 lg:border-l border-slate-200 flex flex-col shadow-sm shrink-0 transition-all duration-300 overflow-hidden',
+              'w-full lg:w-[420px] xl:w-[480px] flex flex-col min-h-0 overflow-hidden bg-[#EFF8FF] border-t lg:border-l border-slate-200 shadow-sm shrink-0',
               isMobile && !isMobileCartOpen ? 'hidden' : '',
               isMobile && isMobileCartOpen ? 'fixed inset-0 z-40 pt-16 flex' : 'relative'
             ]">
 
-            <!-- Mobile Close Button for Cart Drawer -->
+            <!-- Mobile Close Button -->
             <div v-if="isMobile && isMobileCartOpen" class="absolute top-3 left-4 z-50">
               <button @click="isMobileCartOpen = false"
                 class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-700 rounded-full font-bold text-xs hover:bg-slate-200">
@@ -473,680 +509,644 @@
               </button>
             </div>
 
-            <!-- PANEL STATE 1: KERANJANG -->
-            <div v-if="rightPanelState === 'Keranjang'" class="flex-1 flex flex-col h-full">
-
-              <!-- Cart Header -->
-              <div class="px-5 pt-6 pb-4 border-b border-slate-200 bg-white/90">
-                <div class="flex items-center justify-between gap-3">
-                  <div>
-                    <h3 class="text-xl font-black text-slate-950">Keranjang</h3>
-                  </div>
-                  <!-- <span class="rounded-full bg-[#1452B9]/10 px-3 py-1 text-xs font-black text-[#1452B9]">{{
-                    cartTotalItems }} Item</span> -->
+            <!-- PANEL KERANJANG -->
+            <div v-if="rightPanelState === 'Keranjang'" class="flex-1 min-h-0 overflow-hidden">
+              <div
+                class="h-full flex flex-col rounded-[32px] bg-[#DCEBFC] border border-blue-100/70 shadow-sm overflow-hidden">
+                <!-- Header -->
+                <div class="px-5 pt-4 pb-2 shrink-0">
+                  <h3 class="text-xl font-black text-slate-950">Keranjang</h3>
                 </div>
-              </div>
-
-              <!-- Cart Fields -->
-              <div class="p-5 flex flex-col gap-4 border-b border-slate-200 bg-white/90 rounded-b-[32px]">
-                <div class="grid gap-4">
+                <!-- Fields -->
+                <div class="px-5 pb-2 flex flex-col gap-2 shrink-0">
                   <div class="grid gap-2">
-                    <label class="text-[10px] font-bold uppercase tracking-[0.35em] text-slate-500">Nomor
-                      Transaksi</label>
-                    <input type="text" :value="transactionNo" disabled
-                      class="w-full rounded-3xl border border-slate-200 bg-[#F8FBFF] px-4 py-3 text-sm font-bold text-slate-900 outline-none cursor-not-allowed" />
-                  </div>
-                  <div class="grid gap-2">
-                    <label class="text-[10px] font-bold uppercase tracking-[0.35em] text-slate-500">Tanggal/Jam</label>
-                    <input type="text" :value="currentFormattedDateTime" disabled
-                      class="w-full rounded-3xl border border-slate-200 bg-[#F8FBFF] px-4 py-3 text-sm text-slate-700 outline-none cursor-not-allowed" />
-                  </div>
-                  <div class="grid gap-2">
-                    <label class="text-[10px] font-bold uppercase tracking-[0.35em] text-slate-500">Kasir</label>
-                    <input type="text" :value="kasirName" disabled
-                      class="w-full rounded-3xl border border-slate-200 bg-[#F8FBFF] px-4 py-3 text-sm text-slate-700 outline-none cursor-not-allowed" />
-                  </div>
-                  <div class="grid gap-2">
-                    <label class="text-[10px] font-bold uppercase tracking-[0.35em] text-slate-500">Nomor Meja</label>
-                    <div class="relative" id="table-selector-container">
-                      <button type="button" @click="toggleTableDropdown"
-                        class="w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 font-bold text-left flex items-center justify-between transition-all hover:border-slate-300">
-                        <span>{{ selectedTable ? 'Meja ' + selectedTable : 'Pilih Meja' }}</span>
-                        <i class="ph-bold ph-caret-down text-lg text-slate-400"></i>
-                      </button>
-                      <div v-if="isTableDropdownOpen"
-                        class="absolute left-0 right-0 z-20 mt-2 rounded-[28px] border border-slate-200 bg-white p-3 shadow-xl grid grid-cols-4 gap-2 max-h-52 overflow-y-auto">
-                        <button v-for="tableNum in tables" :key="tableNum" type="button" @click="selectTable(tableNum)"
-                          :class="[
-                            'h-11 rounded-2xl text-sm font-bold transition-all',
-                            selectedTable === tableNum ? 'bg-[#1452B9] text-white border border-[#1452B9]' : 'bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100'
-                          ]">
-                          {{ tableNum }}
+                    <div class="grid gap-0.5">
+                      <label class="text-[10px] font-bold text-slate-600">Nomor Transaksi</label>
+                      <input type="text" :value="transactionNo" disabled
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-1.5 text-sm font-semibold text-slate-800 outline-none cursor-not-allowed" />
+                    </div>
+                    <div class="grid gap-0.5">
+                      <label class="text-[10px] font-bold text-slate-600">Tanggal/Jam</label>
+                      <input type="text" :value="currentFormattedDateTime" disabled
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-1.5 text-sm text-slate-700 outline-none cursor-not-allowed" />
+                    </div>
+                    <div class="grid gap-0.5">
+                      <label class="text-[10px] font-bold text-slate-600">Kasir</label>
+                      <input type="text" :value="kasirName" disabled
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-1.5 text-sm text-slate-700 outline-none cursor-not-allowed" />
+                    </div>
+                    <div class="grid gap-0.5">
+                      <label class="text-[10px] font-bold text-slate-600">Nomor Meja</label>
+                      <div class="relative" id="table-selector-container">
+                        <button type="button" @click="toggleTableDropdown"
+                          class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-1.5 text-sm text-slate-800 font-semibold text-left flex items-center justify-between transition-all hover:border-slate-300">
+                          <span>{{ selectedTable ? 'Meja ' + selectedTable : 'Pilih Meja' }}</span>
+                          <i class="ph-bold ph-caret-down text-lg text-slate-400"></i>
                         </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="flex-1 overflow-y-auto p-5 space-y-5">
-                <div class="rounded-[32px] bg-white border border-slate-200 shadow-sm overflow-hidden">
-                  <div
-                    class="grid grid-cols-[2.4fr_1fr_1fr_48px] gap-2 px-4 py-3 text-[10px] font-black uppercase text-slate-500 bg-slate-50 border-b border-slate-200">
-                    <div>Menu</div>
-                    <div class="text-center">QTY</div>
-                    <div class="text-right">Total</div>
-                    <div class="text-center">Aksi</div>
-                  </div>
-                  <div class="divide-y divide-slate-100">
-                    <div v-if="cart.length === 0" class="py-14 text-center text-slate-400">
-                      <div
-                        class="mx-auto mb-3 w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
-                        <i class="ph-bold ph-shopping-cart-simple text-xl"></i>
-                      </div>
-                      <p class="font-bold text-slate-700">Keranjang masih kosong</p>
-                      <p class="mt-1 text-[11px] text-slate-400">Pilih hidangan di menu kasir sebelah kiri untuk
-                        ditambahkan.</p>
-                    </div>
-                    <template v-else>
-                      <div v-for="item in cart" :key="item.menuId"
-                        class="grid grid-cols-[2.4fr_1fr_1fr_48px] gap-2 items-center px-4 py-4 text-slate-800">
-                        <div class="flex flex-col gap-1 overflow-hidden">
-                          <span class="font-bold text-sm truncate">{{ item.name }}</span>
-                          <span class="text-[11px] text-slate-400">{{ formatRupiah(item.price) }}</span>
-                        </div>
-                        <div class="text-center font-bold text-sm">{{ item.quantity }}</div>
-                        <div class="text-right font-black text-sm text-slate-900">{{ formatRupiah(item.price *
-                          item.quantity) }}</div>
-                        <div class="flex items-center justify-center">
-                          <button @click="removeCartItem(item.menuId)"
-                            class="rounded-full p-2 text-slate-400 hover:text-red-600 transition-colors">
-                            <i class="ph-bold ph-trash-simple"></i>
+                        <div v-if="isTableDropdownOpen"
+                          class="absolute left-0 right-0 z-20 mt-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl grid grid-cols-4 gap-2 max-h-52 overflow-y-auto">
+                          <button v-for="tableNum in tables" :key="tableNum" type="button"
+                            @click="selectTable(tableNum)" :class="[
+                              'h-10 rounded-[10px] text-sm font-bold transition-all',
+                              selectedTable === tableNum
+                                ? 'bg-[#1452B9] text-white border border-[#1452B9]'
+                                : 'bg-slate-50 text-slate-700 border border-slate-200 hover:bg-slate-100'
+                            ]">
+                            {{ tableNum }}
                           </button>
                         </div>
                       </div>
-                    </template>
+                    </div>
                   </div>
                 </div>
-
-                <div class="rounded-[32px] bg-white border border-slate-200 p-5 shadow-sm space-y-4">
-                  <div class="flex items-center justify-between">
-                    <span class="text-sm font-bold text-slate-700">Total:</span>
+                <!-- Table Header -->
+                <div
+                  class="grid grid-cols-[2.8fr_1fr_1.2fr_48px] gap-3 px-4 py-2 text-[11px] font-bold text-slate-600 bg-[#C9DCF0] shrink-0 border-t border-blue-200/50">
+                  <div>Menu</div>
+                  <div class="text-center">QTY</div>
+                  <div class="text-right">Total</div>
+                  <div class="text-center">Aksi</div>
+                </div>
+                <!-- Cart Items -->
+                <div class="flex-1 min-h-0 overflow-y-auto divide-y divide-blue-100/60">
+                  <div v-if="cart.length === 0"
+                    class="flex h-full flex-col items-center justify-center text-center text-slate-400 px-5">
+                    <div class="w-14 h-14 rounded-full bg-white/60 flex items-center justify-center mb-3">
+                      <i class="ph-bold ph-shopping-cart-simple text-2xl text-slate-400"></i>
+                    </div>
+                    <p class="font-semibold text-slate-500 text-sm">Keranjang masih kosong</p>
+                    <p class="text-xs text-slate-400 mt-1">Pilih menu di sebelah kiri</p>
+                  </div>
+                  <template v-else>
+                    <div v-for="item in cart" :key="item.menuId"
+                      class="grid grid-cols-[2.8fr_1fr_1.2fr_48px] gap-3 items-center px-4 py-2.5 text-slate-800 hover:bg-blue-50/30 transition-colors">
+                      <div class="flex flex-col gap-0 overflow-hidden">
+                        <span class="font-bold text-sm truncate">{{ item.name }}</span>
+                        <span class="text-[10px] text-slate-500">{{ formatRupiah(item.price) }}</span>
+                      </div>
+                      <div class="text-center font-bold text-sm">{{ item.quantity }}</div>
+                      <div class="text-right font-black text-sm text-slate-900">{{ formatRupiah(item.price *
+                        item.quantity) }}</div>
+                      <div class="flex items-center justify-center">
+                        <button @click="removeCartItem(item.menuId)"
+                          class="rounded-full p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors">
+                          <i class="ph-bold ph-trash-simple text-sm"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+                <!-- Footer -->
+                <div class="p-4 shrink-0 border-t border-blue-200/50 bg-[#DCEBFC]">
+                  <div class="flex items-center justify-between mb-2.5">
+                    <span class="text-base font-bold text-slate-700">Total:</span>
                     <span class="text-xl font-black text-[#1452B9]">{{ formatRupiah(cartTotal) }}</span>
                   </div>
                   <button @click="proceedToPayment" :disabled="cart.length === 0 || !selectedTable" :class="[
-                      'w-full rounded-3xl py-3 text-sm font-black transition-all duration-200 shadow-sm',
-                      (cart.length > 0 && selectedTable) ? 'bg-[#10B981] text-white hover:bg-[#059669]' : 'bg-slate-300 text-slate-600 cursor-not-allowed'
-                    ]">
+                    'w-full h-10 rounded-xl font-bold transition-all text-sm',
+                    cart.length > 0 && selectedTable
+                      ? 'bg-[#10B981] text-white hover:bg-[#059669] shadow-sm'
+                      : 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                  ]">
                     Bayar
                   </button>
-                  <p v-if="cart.length > 0 && !selectedTable" class="text-[11px] text-amber-600 font-bold text-center">
-                    <i class="ph-bold ph-warning"></i> Pilih nomor meja terlebih dahulu.
+                  <p v-if="cart.length > 0 && !selectedTable" class="text-[10px] text-center text-amber-600 mt-1.5">
+                    ⚠️ Pilih nomor meja terlebih dahulu.
                   </p>
                 </div>
               </div>
             </div>
 
-
-            <div v-if="rightPanelState === 'Pembayaran'" class="flex-1 flex flex-col h-full bg-[#EFF8FF]">
-
-              <div class="px-5 pt-6 pb-4 border-b border-slate-200 bg-white/90 flex items-center gap-3">
-                <button @click="backToCart"
-                  class="p-2 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
-                  <i class="ph-bold ph-arrow-left text-lg"></i>
-                </button>
-                <div>
-                  <h3 class="text-xl font-black text-slate-950">Pembayaran</h3>
-                  <p class="text-sm text-slate-500 mt-1">Pilih metode bayar dan konfirmasi pesanan.</p>
+            <!-- PANEL PEMBAYARAN -->
+            <div v-if="rightPanelState === 'Pembayaran'" class="flex-1 min-h-0 overflow-hidden">
+              <div
+                class="flex flex-col h-full rounded-[32px] bg-white border border-slate-200 shadow-sm overflow-hidden">
+                <div class="px-4 pt-3 pb-2 border-b border-slate-200 shrink-0">
+                  <h3 class="text-lg font-black text-slate-950">Pembayaran</h3>
+                  <p class="text-xs text-slate-500 mt-0.5">Pilih metode bayar dan konfirmasi pesanan.</p>
                 </div>
-              </div>
-
-              <div class="p-5 flex-1 flex flex-col gap-5 overflow-y-auto">
-                <div class="space-y-4">
-                  <div class="grid gap-2">
-                    <label class="text-[10px] font-bold uppercase tracking-[0.35em] text-slate-500">Total
-                      Pembayaran</label>
-                    <div
-                      class="rounded-3xl border border-slate-200 bg-white px-4 py-3 text-slate-900 font-black text-lg flex items-center justify-between">
-                      <span>{{ formatRupiah(cartTotal) }}</span>
-                      <span
-                        class="rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-bold text-blue-700 border border-blue-100">Meja
-                        {{ selectedTable }}</span>
+                <div class="flex-1 p-4 flex flex-col justify-between gap-3 overflow-hidden">
+                  <div class="space-y-3">
+                    <div class="grid gap-1">
+                      <label class="text-[9px] font-bold uppercase tracking-[0.35em] text-slate-500">Total
+                        Pembayaran</label>
+                      <div
+                        class="rounded-2xl border border-slate-200 bg-[#F8FBFF] px-3 py-2 text-slate-900 font-black text-base flex items-center justify-between">
+                        <span>{{ formatRupiah(cartTotal) }}</span>
+                        <span
+                          class="rounded-full bg-blue-50 px-2.5 py-0.5 text-[9px] font-bold text-blue-700 border border-blue-100">Meja
+                          {{ selectedTable }}</span>
+                      </div>
                     </div>
-                  </div>
-
-                  <div class="grid gap-2">
-                    <label class="text-[10px] font-bold uppercase tracking-[0.35em] text-slate-500">Metode
-                      pembayaran</label>
-                    <div class="grid grid-cols-3 gap-2">
-                      <button @click="selectPaymentMethod('Tunai')" type="button" :class="[
-                            'rounded-3xl border px-4 py-4 text-sm font-bold flex flex-col items-center justify-center gap-2 transition-all duration-200 min-h-[90px]',
-                            paymentMethod === 'Tunai' ? 'bg-[#1452B9] text-white border-[#1452B9]' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
-                          ]">
-                        <i class="ph-bold ph-money text-xl"></i>
-                        <span>Tunai</span>
-                      </button>
-                      <button @click="selectPaymentMethod('QRIS')" type="button" :class="[
-                            'rounded-3xl border px-4 py-4 text-sm font-bold flex flex-col items-center justify-center gap-2 transition-all duration-200 min-h-[90px]',
-                            paymentMethod === 'QRIS' ? 'bg-[#1452B9] text-white border-[#1452B9]' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
-                          ]">
-                        <i class="ph-bold ph-qr-code text-xl"></i>
-                        <span>QRIS</span>
-                      </button>
-                      <button @click="selectPaymentMethod('Debit')" type="button" :class="[
-                            'rounded-3xl border px-4 py-4 text-sm font-bold flex flex-col items-center justify-center gap-2 transition-all duration-200 min-h-[90px]',
-                            paymentMethod === 'Debit' ? 'bg-[#1452B9] text-white border-[#1452B9]' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
-                          ]">
-                        <i class="ph-bold ph-credit-card text-xl"></i>
-                        <span>Debit</span>
-                      </button>
+                    <div class="grid gap-1">
+                      <label class="text-[9px] font-bold uppercase tracking-[0.35em] text-slate-500">Metode
+                        pembayaran</label>
+                      <div class="grid grid-cols-3 gap-1.5">
+                        <button @click="selectPaymentMethod('Tunai')" type="button" :class="[
+                          'rounded-xl border px-2 py-2.5 text-xs font-bold flex flex-col items-center justify-center gap-1 transition-all duration-200',
+                          paymentMethod === 'Tunai' ? 'bg-[#1452B9] text-white border-[#1452B9] shadow-sm' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                        ]">
+                          <i class="ph-bold ph-money text-base"></i>
+                          <span class="text-[10px]">Tunai</span>
+                        </button>
+                        <button @click="selectPaymentMethod('QRIS')" type="button" :class="[
+                          'rounded-xl border px-2 py-2.5 text-xs font-bold flex flex-col items-center justify-center gap-1 transition-all duration-200',
+                          paymentMethod === 'QRIS' ? 'bg-[#1452B9] text-white border-[#1452B9] shadow-sm' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                        ]">
+                          <i class="ph-bold ph-qr-code text-base"></i>
+                          <span class="text-[10px]">QRIS</span>
+                        </button>
+                        <button @click="selectPaymentMethod('Debit')" type="button" :class="[
+                          'rounded-xl border px-2 py-2.5 text-xs font-bold flex flex-col items-center justify-center gap-1 transition-all duration-200',
+                          paymentMethod === 'Debit' ? 'bg-[#1452B9] text-white border-[#1452B9] shadow-sm' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                        ]">
+                          <i class="ph-bold ph-credit-card text-base"></i>
+                          <span class="text-[10px]">Debit</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-
-                  <div class="grid gap-2">
-                    <label class="text-[10px] font-bold uppercase tracking-[0.35em] text-slate-500">Nominal
-                      Pembayaran</label>
-                    <div class="relative">
-                      <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">Rp</span>
-                      <input type="text" v-model="nominalInput" @input="handleNominalInput"
-                        placeholder="Masukkan jumlah uang"
-                        class="w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 pl-10 text-sm font-bold text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-100 transition-all" />
+                    <div class="grid gap-1">
+                      <label class="text-[9px] font-bold uppercase tracking-[0.35em] text-slate-500">Nominal
+                        Pembayaran</label>
+                      <div class="relative">
+                        <span
+                          class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">Rp</span>
+                        <input type="text" v-model="nominalInput" @input="handleNominalInput"
+                          placeholder="Masukkan jumlah uang"
+                          class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 pl-8 text-sm font-bold text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-100 transition-all" />
+                      </div>
                     </div>
-                  </div>
-
-                  <div v-if="paymentMethod === 'Tunai'" class="flex flex-wrap gap-2">
-                    <button @click="setExactCash" type="button"
-                      class="rounded-2xl border border-slate-200 bg-slate-100 px-3 py-2 text-[10px] font-bold text-slate-700 hover:bg-slate-200">Uang
-                      Pas</button>
-                    <button @click="addCash(10000)" type="button"
-                      class="rounded-2xl border border-slate-200 bg-slate-100 px-3 py-2 text-[10px] font-bold text-slate-700 hover:bg-slate-200">+
-                      10k</button>
-                    <button @click="addCash(20000)" type="button"
-                      class="rounded-2xl border border-slate-200 bg-slate-100 px-3 py-2 text-[10px] font-bold text-slate-700 hover:bg-slate-200">+
-                      20k</button>
-                    <button @click="addCash(50000)" type="button"
-                      class="rounded-2xl border border-slate-200 bg-slate-100 px-3 py-2 text-[10px] font-bold text-slate-700 hover:bg-slate-200">+
-                      50k</button>
-                    <button @click="addCash(100000)" type="button"
-                      class="rounded-2xl border border-slate-200 bg-slate-100 px-3 py-2 text-[10px] font-bold text-slate-700 hover:bg-slate-200">+
-                      100k</button>
-                  </div>
-
-                  <div class="grid gap-2">
-                    <label class="text-[10px] font-bold uppercase tracking-[0.35em] text-slate-500">Kembalian</label>
-                    <div :class="[
-                        'rounded-3xl border px-4 py-3 text-sm font-black flex items-center justify-between transition-all',
+                    <div class="grid gap-1">
+                      <label class="text-[9px] font-bold uppercase tracking-[0.35em] text-slate-500">Kembalian</label>
+                      <div :class="[
+                        'rounded-xl border px-3 py-2 text-sm font-black flex items-center justify-between transition-all',
                         isNominalValid ? 'bg-white border-slate-200 text-slate-900' : 'bg-red-50 border-red-200 text-red-700'
                       ]">
-                      <span>{{ formatRupiah(calculatedChange) }}</span>
-                      <span v-if="!isNominalValid && paymentMethod === 'Tunai'"
-                        class="rounded-full bg-red-100 px-2 py-1 text-[10px] font-bold text-red-700">Uang Kurang</span>
+                        <span>{{ formatRupiah(calculatedChange) }}</span>
+                        <span v-if="!isNominalValid && paymentMethod === 'Tunai'"
+                          class="rounded-full bg-red-100 px-2 py-0.5 text-[9px] font-bold text-red-700">Uang
+                          Kurang</span>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <div class="border-t border-slate-200 bg-slate-50 px-4 py-3 shrink-0 flex justify-end gap-2.5">
+                  <button @click="backToCart"
+                    class="rounded-[10px] border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-all">Kembali</button>
+                  <button @click="confirmPayment" :disabled="!isPaymentExecutable" :class="[
+                    'rounded-[10px] px-4 py-2 text-xs font-bold transition-all shadow-sm',
+                    isPaymentExecutable ? 'bg-[#10B981] text-white hover:bg-[#059669]' : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                  ]">
+                    Konfirmasi
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Floating Shopping Cart Button for Mobile -->
+            <div v-if="activePage === 'Kasir' && isMobile && cart.length > 0 && !isMobileCartOpen"
+              class="fixed bottom-6 right-6 z-30 shadow-2xl animate-bounce">
+              <button @click="isMobileCartOpen = true"
+                class="bg-[#1452B9] text-white px-5 py-4 rounded-full flex items-center gap-3 font-extrabold shadow-lg hover:bg-blue-800 transition-colors">
+                <div class="relative">
+                  <i class="ph-bold ph-shopping-cart text-xl"></i>
+                  <span
+                    class="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 rounded-full text-[10px] flex items-center justify-center font-bold border-2 border-[#1452B9]">
+                    {{ cartTotalItems }}
+                  </span>
+                </div>
+                <span>Keranjang ({{ formatRupiah(cartTotal) }})</span>
+              </button>
+            </div>
+            <!-- ================= MODAL POPUP: TAMBAH MENU ================= -->
+            <div v-if="isAddMenuModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <!-- Overlay -->
+              <div @click="closeAddMenuModal" class="absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity">
               </div>
 
-              <div class="p-4 border-t border-slate-200 bg-white flex justify-end gap-3">
-                <button @click="backToCart"
-                  class="rounded-3xl border border-slate-200 bg-slate-100 px-4 py-3 text-xs font-bold text-slate-700 hover:bg-slate-200 transition-all">Kembali</button>
-                <button @click="confirmPayment" :disabled="!isPaymentExecutable" :class="[
-                        'rounded-3xl px-4 py-3 text-xs font-bold transition-all shadow-sm',
-                        isPaymentExecutable ? 'bg-[#10B981] text-white hover:bg-[#059669]' : 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                      ]">
-                  Konfirmasi Pembayaran
-                </button>
+              <!-- Form Container - TAMBAHKAN max-h-[90vh] overflow-y-auto -->
+              <div
+                class="relative bg-white rounded-3xl w-full max-w-md shadow-2xl border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+
+                <!-- Modal Header - FIXED -->
+                <div
+                  class="sticky top-0 z-10 p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                  <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                    <i class="ph-bold ph-plus-circle text-[#1452B9]"></i>
+                    <span>Tambah Menu Baru</span>
+                  </h3>
+                  <button @click="closeAddMenuModal"
+                    class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors">
+                    <i class="ph-bold ph-x text-lg"></i>
+                  </button>
+                </div>
+
+                <!-- Modal Form - dengan padding dan scroll -->
+                <form @submit.prevent="submitAddMenu" class="p-6 flex flex-col gap-4">
+                  <!-- Nama Menu -->
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Nama Menu</label>
+                    <input type="text" v-model="newMenu.name" required placeholder="Contoh: Es Teh Manis"
+                      class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 font-medium text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none transition-all" />
+                  </div>
+
+                  <!-- Harga Menu -->
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Harga Menu (Rupiah)</label>
+                    <div class="relative">
+                      <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">Rp</span>
+                      <input type="number" v-model.number="newMenu.price" required min="0" step="500"
+                        placeholder="Contoh: 5000"
+                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 font-extrabold text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none transition-all" />
+                    </div>
+                  </div>
+
+                  <!-- Kategori Menu -->
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Kategori</label>
+                    <select v-model="newMenu.category" required
+                      class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 font-medium text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none transition-all appearance-none cursor-pointer">
+                      <option value="Makanan">Makanan</option>
+                      <option value="Minuman">Minuman</option>
+                      <option value="Snack">Snack</option>
+                    </select>
+                  </div>
+
+                  <!-- ========== FOTO MENU - DIPERKECIL ========== -->
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Foto Menu</label>
+
+                    <!-- Preview Gambar - DIPERKECIL -->
+                    <div v-if="newMenu.imagePreview"
+                      class="relative w-full h-24 rounded-xl overflow-hidden border border-slate-200 mb-1">
+                      <img :src="newMenu.imagePreview" alt="Preview" class="w-full h-full object-cover" />
+                      <button type="button" @click="removeSelectedImage"
+                        class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600 transition-colors">
+                        <i class="ph-bold ph-x text-sm"></i>
+                      </button>
+                    </div>
+
+                    <!-- Input File (hidden) -->
+                    <input type="file" id="menu-image-input" accept="image/*" @change="handleFileUpload"
+                      class="hidden" />
+
+                    <!-- Tombol Pilih Foto -->
+                    <button type="button" @click="chooseMenuImage"
+                      class="w-full rounded-[10px] border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all">
+                      <i class="ph-bold ph-image mr-2"></i>
+                      {{ newMenu.imagePreview ? 'Ganti Foto' : 'Pilih Foto Menu' }}
+                    </button>
+
+                    <p class="text-[10px] text-slate-400">Pilih file gambar (JPG, PNG) - Maksimal 2MB</p>
+                  </div>
+
+                  <!-- ========== TOMBOL SIMPAN & BATAL ========== -->
+                  <div class="flex gap-3 mt-2 pt-4 border-t border-slate-100 sticky bottom-0 bg-white py-2">
+                    <button type="button" @click="closeAddMenuModal"
+                      class="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-sm transition-all">
+                      Batal
+                    </button>
+                    <button type="submit"
+                      class="flex-1 py-2.5 rounded-xl bg-[#1452B9] hover:bg-[#0f3fa0] text-white font-bold text-sm transition-all shadow-xs">
+                      Simpan Menu
+                    </button>
+                  </div>
+
+                </form>
+
+              </div>
+            </div>
+
+            <!-- ================= MODAL POPUP: AKUN ================= -->
+            <div v-if="isAccountModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div @click="closeAccountModal" class="absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity">
+              </div>
+              <div
+                class="relative bg-white rounded-3xl w-full max-w-md shadow-2xl border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-200">
+                <div class="p-6 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                  <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                    <i class="ph-bold ph-user-circle text-[#1452B9] text-2xl"></i>
+                    <span>Informasi Detail Akun</span>
+                  </h3>
+                  <button @click="closeAccountModal"
+                    class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-colors">
+                    <i class="ph-bold ph-x text-lg"></i>
+                  </button>
+                </div>
+                <div class="p-6 flex flex-col gap-4">
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Nama Kasir</label>
+                    <input type="text" v-model="accountName" placeholder="Nama Lengkap Kasir"
+                      class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 font-bold text-sm bg-slate-50 focus:bg-white focus:border-[#1452B9] outline-none transition-all" />
+                  </div>
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Username</label>
+                    <input type="text" v-model="accountUsername" placeholder="Username"
+                      class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 font-bold text-sm bg-slate-50 focus:bg-white focus:border-[#1452B9] outline-none transition-all" />
+                  </div>
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Kata Sandi Saat
+                      Ini</label>
+                    <div class="relative">
+                      <input :type="isAccountPasswordVisible ? 'text' : 'password'" v-model="accountPassword" disabled
+                        class="w-full pl-4 pr-12 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-mono text-sm outline-none transition-all" />
+                      <button type="button" @click="isAccountPasswordVisible = !isAccountPasswordVisible"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer">
+                        <i :class="isAccountPasswordVisible ? 'ph-bold ph-eye-slash' : 'ph-bold ph-eye'"
+                          class="text-lg"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div v-if="accountSuccessMsg"
+                    class="bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs rounded-xl p-3 font-semibold flex items-center gap-2">
+                    <i class="ph-bold ph-check-circle text-base"></i>
+                    <span>{{ accountSuccessMsg }}</span>
+                  </div>
+                  <div class="flex flex-col sm:flex-row gap-3 mt-4 pt-4 border-t border-slate-100">
+                    <button type="button" @click="openChangePasswordModal"
+                      class="flex-1 py-3 px-4 rounded-xl border border-amber-300 text-amber-700 bg-amber-50 hover:bg-amber-100 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all">
+                      <i class="ph-bold ph-lock-key"></i>
+                      <span>Ubah Kata Sandi</span>
+                    </button>
+                    <button type="button" @click="handleSaveAccount"
+                      class="flex-1 py-3 px-4 rounded-xl bg-[#1452B9] hover:bg-blue-800 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-xs">
+                      <i class="ph-bold ph-check-square"></i>
+                      <span>Simpan Profil</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================= MODAL POPUP: UBAH KATA SANDI ================= -->
+            <div v-if="isChangePasswordModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div @click="closeChangePasswordModal"
+                class="absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity"></div>
+              <div
+                class="relative bg-white rounded-3xl w-full max-w-md shadow-2xl border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-200">
+                <div class="p-6 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                  <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                    <i class="ph-bold ph-lock-key text-[#1452B9] text-2xl"></i>
+                    <span>Form Ubah Kata Sandi</span>
+                  </h3>
+                  <button @click="closeChangePasswordModal"
+                    class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-colors">
+                    <i class="ph-bold ph-x text-lg"></i>
+                  </button>
+                </div>
+                <form @submit.prevent="handleUpdatePassword" class="p-6 flex flex-col gap-4">
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Nama Kasir (Saat
+                      Ini)</label>
+                    <input type="text" v-model="accountName" disabled
+                      class="w-full px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 font-bold text-sm cursor-not-allowed outline-none" />
+                  </div>
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Masukkan Kata Sandi
+                      Saat
+                      Ini</label>
+                    <input type="password" v-model="oldPasswordInput" required
+                      placeholder="Masukkan kata sandi lama Anda"
+                      class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 font-medium text-sm focus:border-[#1452B9] focus:ring-1 focus:ring-blue-100 outline-none transition-all" />
+                  </div>
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Masukkan Kata Sandi
+                      Baru</label>
+                    <input type="password" v-model="newPasswordInput" required placeholder="Buat kata sandi baru Anda"
+                      class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 font-medium text-sm focus:border-[#1452B9] focus:ring-1 focus:ring-blue-100 outline-none transition-all" />
+                  </div>
+                  <div v-if="accountErrorMsg"
+                    class="bg-red-50 border border-red-200 text-red-600 text-xs rounded-xl p-3 font-semibold flex items-center gap-2">
+                    <i class="ph-bold ph-warning-circle text-base"></i>
+                    <span>{{ accountErrorMsg }}</span>
+                  </div>
+                  <div v-if="accountSuccessMsg"
+                    class="bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs rounded-xl p-3 font-semibold flex items-center gap-2">
+                    <i class="ph-bold ph-check-circle text-base"></i>
+                    <span>{{ accountSuccessMsg }}</span>
+                  </div>
+                  <div class="flex gap-3 mt-4 pt-4 border-t border-slate-100">
+                    <button type="button" @click="closeChangePasswordModal"
+                      class="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-sm transition-all">Batal</button>
+                    <button type="submit"
+                      class="flex-1 py-3 rounded-xl bg-[#1452B9] hover:bg-[#0f3fa0] text-white font-bold text-sm transition-all shadow-xs">Simpan
+                      Password</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- ================= MODAL POPUP: FILTER PERIODE LAPORAN ================= -->
+            <div v-if="isFilterModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div @click="isFilterModalOpen = false"
+                class="absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity"></div>
+              <div
+                class="relative bg-white rounded-3xl w-full max-w-md shadow-2xl border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-200">
+                <div class="p-6 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                  <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
+                    <i class="ph-bold ph-calendar-blank text-[#1452B9] text-2xl"></i>
+                    <span>Filter Periode Laporan</span>
+                  </h3>
+                  <button @click="isFilterModalOpen = false"
+                    class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-colors">
+                    <i class="ph-bold ph-x text-lg"></i>
+                  </button>
+                </div>
+                <div class="p-6 flex flex-col gap-5">
+                  <div class="flex flex-col gap-2">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Pilih Periode</label>
+                    <div class="grid grid-cols-2 gap-2">
+                      <button v-for="type in ['Semua', 'Hari', 'Tanggal', 'Bulan']" :key="type"
+                        @click="laporanFilterType = type" :class="[
+                          'py-3 px-4 rounded-xl text-xs font-bold border transition-all text-center cursor-pointer',
+                          laporanFilterType === type 
+                            ? 'bg-[#1452B9] border-[#1452B9] text-white shadow-xs' 
+                            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                        ]">
+                        <span v-if="type === 'Semua'">Semua Transaksi</span>
+                        <span v-else-if="type === 'Hari'">Hari Ini</span>
+                        <span v-else-if="type === 'Tanggal'">Pilih Tanggal</span>
+                        <span v-else-if="type === 'Bulan'">Pilih Bulan</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div v-if="laporanFilterType === 'Tanggal'"
+                    class="flex flex-col gap-2 animate-in fade-in slide-in-from-top-1 duration-150">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Pilih Tanggal
+                      Riwayat</label>
+                    <input type="date" v-model="laporanSelectedDate"
+                      class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-[#1452B9] focus:ring-1 focus:ring-blue-100" />
+                  </div>
+                  <div v-if="laporanFilterType === 'Bulan'"
+                    class="flex flex-col gap-2 animate-in fade-in slide-in-from-top-1 duration-150">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Pilih Bulan
+                      Riwayat</label>
+                    <input type="month" v-model="laporanSelectedMonth"
+                      class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-[#1452B9] focus:ring-1 focus:ring-blue-100" />
+                  </div>
+                  <div class="flex gap-3 mt-4 pt-4 border-t border-slate-100">
+                    <button type="button" @click="isFilterModalOpen = false"
+                      class="flex-1 py-3 rounded-xl bg-[#1452B9] text-white hover:bg-blue-800 font-extrabold text-xs transition-all shadow-xs text-center cursor-pointer">
+                      Terapkan Filter
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================= MODAL POPUP: KONFIRMASI HAPUS MENU ================= -->
+            <div v-if="isDeleteConfirmModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div @click="cancelDeleteMenu" class="absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity">
+              </div>
+              <div
+                class="relative bg-white rounded-3xl w-full max-w-sm shadow-2xl border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-200">
+                <div class="p-6 text-center flex flex-col items-center gap-4">
+                  <div
+                    class="w-14 h-14 bg-red-50 text-red-600 rounded-full flex items-center justify-center text-3xl animate-bounce">
+                    <i class="ph-bold ph-trash"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-base font-black text-slate-900 mb-1">Hapus Menu</h3>
+                    <p class="text-xs text-slate-500 font-medium">Apakah Anda yakin ingin menghapus menu <strong
+                        class="text-slate-800">"{{ menuToDelete?.name }}"</strong> dari daftar menu?</p>
+                  </div>
+                  <div class="flex gap-3 w-full border-t border-slate-100 pt-4 mt-2">
+                    <button type="button" @click="cancelDeleteMenu"
+                      class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all cursor-pointer border border-slate-200">
+                      Tidak, Batal
+                    </button>
+                    <button type="button" @click="executeDeleteMenu"
+                      class="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs transition-all shadow-xs cursor-pointer">
+                      Ya, Hapus
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================= RECEIPT MODAL: BUKTI TRANSAKSI ================= -->
+            <div v-if="isReceiptModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div class="absolute inset-0 bg-black/60 backdrop-blur-xs"></div>
+              <div
+                class="relative bg-white rounded-3xl w-full max-w-sm shadow-2xl p-6 border border-slate-100 flex flex-col gap-5 animate-in zoom-in-95 duration-200 font-mono">
+                <div class="text-center flex flex-col items-center gap-1">
+                  <div
+                    class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-2xl mb-1">
+                    <i class="ph-bold ph-check-circle"></i>
+                  </div>
+                  <h3 class="text-lg font-bold text-slate-900 uppercase tracking-widest">TRANSAKSI SELESAI</h3>
+                  <p class="text-[11px] text-slate-500 font-sans">RUMAH MAKAN IBU</p>
+                  <p class="text-[9px] text-slate-400 font-sans">Kav. 12, Jakarta Selatan</p>
+                </div>
+                <div
+                  class="border-t border-dashed border-slate-200 pt-3 flex flex-col gap-1 text-[11px] text-slate-600">
+                  <div class="flex justify-between">
+                    <span>No. Transaksi:</span>
+                    <span class="font-bold text-slate-800">{{ lastCompletedTransaction.id }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Tanggal / Jam:</span>
+                    <span>{{ lastCompletedTransaction.date }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Meja:</span>
+                    <span class="font-bold text-slate-800">Meja {{ lastCompletedTransaction.tableNo }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Kasir:</span>
+                    <span>Admin</span>
+                  </div>
+                </div>
+                <div class="border-t border-dashed border-slate-200 my-1"></div>
+                <div class="flex flex-col gap-2 max-h-[120px] overflow-y-auto pr-1">
+                  <div v-for="item in lastCompletedTransaction.items" :key="item.menuId"
+                    class="flex justify-between text-xs text-slate-700">
+                    <div class="flex flex-col max-w-[180px]">
+                      <span class="font-bold text-slate-800 line-clamp-1 font-sans">{{ item.name }}</span>
+                      <span class="text-[10px] text-slate-400">{{ item.quantity }} x {{ formatRupiah(item.price)
+                        }}</span>
+                    </div>
+                    <span class="font-bold text-slate-900">{{ formatRupiah(item.price * item.quantity) }}</span>
+                  </div>
+                </div>
+                <div class="border-t border-dashed border-slate-200 pt-3 flex flex-col gap-1.5 text-xs">
+                  <div class="flex justify-between font-bold text-slate-900 text-sm">
+                    <span>TOTAL</span>
+                    <span>{{ formatRupiah(lastCompletedTransaction.amount) }}</span>
+                  </div>
+                  <div class="flex justify-between text-slate-600">
+                    <span>Metode:</span>
+                    <span class="font-bold uppercase">{{ lastCompletedTransaction.paymentMethod }}</span>
+                  </div>
+                  <div class="flex justify-between text-slate-600">
+                    <span>Nominal Bayar:</span>
+                    <span>{{ formatRupiah(lastCompletedTransaction.nominalPaid) }}</span>
+                  </div>
+                  <div class="flex justify-between font-bold text-emerald-600 border-t border-slate-100 pt-1.5">
+                    <span>KEMBALIAN</span>
+                    <span>{{ formatRupiah(lastCompletedTransaction.change) }}</span>
+                  </div>
+                </div>
+                <div class="border-t border-dashed border-slate-200 pt-3 flex flex-col gap-2">
+                  <button @click="printReceipt"
+                    class="w-full py-3 bg-[#1452B9] hover:bg-blue-800 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all font-sans flex items-center justify-center gap-2 shadow-xs">
+                    <i class="ph-bold ph-printer text-sm"></i>
+                    <span>Cetak Struk Kasir</span>
+                  </button>
+                  <button @click="closeReceiptModal"
+                    class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors font-sans">
+                    Tutup & Selesai
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================= MODAL POPUP: KONFIRMASI LOGOUT ================= -->
+            <div v-if="isLogoutModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <!-- Overlay -->
+              <div @click="closeLogoutModal" class="absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity">
+              </div>
+
+              <!-- Modal Container -->
+              <div
+                class="relative bg-white rounded-3xl w-full max-w-sm shadow-2xl border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-200">
+                <div class="p-6 text-center flex flex-col items-center gap-4">
+                  <!-- Icon -->
+                  <div
+                    class="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center text-3xl animate-bounce">
+                    <i class="ph-bold ph-sign-out"></i>
+                  </div>
+
+                  <div>
+                    <h3 class="text-lg font-black text-slate-900 mb-1">Konfirmasi Keluar</h3>
+                    <p class="text-sm text-slate-500 font-medium">Apakah Anda yakin ingin keluar dari sistem EasyPOS?
+                    </p>
+                    <p class="text-xs text-slate-400 mt-1">Semua sesi akan berakhir.</p>
+                  </div>
+
+                  <!-- Modal Actions -->
+                  <div class="flex gap-3 w-full border-t border-slate-100 pt-4 mt-2">
+                    <button type="button" @click="closeLogoutModal"
+                      class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all cursor-pointer border border-slate-200">
+                      Batal
+                    </button>
+                    <button type="button" @click="executeLogout"
+                      class="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs transition-all shadow-xs cursor-pointer">
+                      Ya, Keluar
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
           </div>
-
         </main>
       </div>
     </div>
-
-    <!-- Floating Shopping Cart Button for Mobile -->
-    <div v-if="activePage === 'Kasir' && isMobile && cart.length > 0 && !isMobileCartOpen"
-      class="fixed bottom-6 right-6 z-30 shadow-2xl animate-bounce">
-      <button @click="isMobileCartOpen = true"
-        class="bg-[#1452B9] text-white px-5 py-4 rounded-full flex items-center gap-3 font-extrabold shadow-lg hover:bg-blue-800 transition-colors">
-        <div class="relative">
-          <i class="ph-bold ph-shopping-cart text-xl"></i>
-          <span
-            class="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 rounded-full text-[10px] flex items-center justify-center font-bold border-2 border-[#1452B9]">
-            {{ cartTotalItems }}
-          </span>
-        </div>
-        <span>Keranjang ({{ formatRupiah(cartTotal) }})</span>
-      </button>
-    </div>
-
-    <!-- ================= MODAL POPUP: TAMBAH MENU ================= -->
-    <div v-if="isAddMenuModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <!-- Overlay -->
-      <div @click="closeAddMenuModal" class="absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity"></div>
-
-      <!-- Form Container -->
-      <div
-        class="relative bg-white rounded-3xl w-full max-w-md shadow-2xl border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-200">
-
-        <!-- Modal Header -->
-        <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-          <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
-            <i class="ph-bold ph-plus-circle text-[#1452B9]"></i>
-            <span>Tambah Menu Baru</span>
-          </h3>
-          <button @click="closeAddMenuModal"
-            class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors">
-            <i class="ph-bold ph-x text-lg"></i>
-          </button>
-        </div>
-
-        <!-- Modal Form -->
-        <form @submit.prevent="submitAddMenu" class="p-6 flex flex-col gap-4">
-          <!-- Nama Menu -->
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Nama Menu</label>
-            <input type="text" v-model="newMenu.name" required placeholder="Contoh: Es Teh Manis"
-              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 font-medium text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none transition-all" />
-          </div>
-
-          <!-- Harga Menu -->
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Harga Menu (Rupiah)</label>
-            <div class="relative">
-              <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">Rp</span>
-              <input type="number" v-model.number="newMenu.price" required min="0" step="500" placeholder="Contoh: 5000"
-                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 font-extrabold text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none transition-all" />
-            </div>
-          </div>
-
-          <!-- Kategori Menu -->
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Kategori</label>
-            <select v-model="newMenu.category" required
-              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 font-medium text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-100 outline-none transition-all appearance-none cursor-pointer">
-              <option value="Makanan">Makanan</option>
-              <option value="Minuman">Minuman</option>
-              <option value="Snack">Snack</option>
-            </select>
-          </div>
-
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-bold text-slate-500 uppercase tracking-wide">Foto Menu</label>
-            <button type="button" @click="chooseMenuImage"
-              class="w-full rounded-3xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all">
-              Pilih Foto Menu
-            </button>
-            <p class="text-[11px] text-slate-400">Tekan tombol di atas untuk memasukkan URL foto menu. Biarkan kosong
-              untuk gambar default.</p>
-          </div>
-
-          <!-- Form Action Buttons -->
-          <div class="flex gap-3 mt-4 pt-4 border-t border-slate-100">
-            <button type="button" @click="closeAddMenuModal"
-              class="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-sm transition-all">
-              Batal
-            </button>
-            <button type="submit"
-              class="flex-1 py-3 rounded-xl bg-[#1452B9] hover:bg-[#0f3fa0] text-white font-bold text-sm transition-all shadow-xs">
-              Simpan Menu
-            </button>
-          </div>
-        </form>
-
-      </div>
-    </div>
-
-    <!-- ================= MODAL POPUP: AKUN (POPUP 1 - SHOW PROFILE & PASSWORD) ================= -->
-    <div v-if="isAccountModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <!-- Overlay -->
-      <div @click="closeAccountModal" class="absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity"></div>
-
-      <!-- Form Container -->
-      <div
-        class="relative bg-white rounded-3xl w-full max-w-md shadow-2xl border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-200">
-
-        <!-- Modal Header -->
-        <div class="p-6 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-          <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
-            <i class="ph-bold ph-user-circle text-[#1452B9] text-2xl"></i>
-            <span>Informasi Detail Akun</span>
-          </h3>
-          <button @click="closeAccountModal"
-            class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-colors">
-            <i class="ph-bold ph-x text-lg"></i>
-          </button>
-        </div>
-
-        <!-- Modal Body -->
-        <div class="p-6 flex flex-col gap-4">
-
-          <!-- Kasir Name field -->
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Nama Kasir</label>
-            <input type="text" v-model="accountName" placeholder="Nama Lengkap Kasir"
-              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 font-bold text-sm bg-slate-50 focus:bg-white focus:border-[#1452B9] outline-none transition-all" />
-          </div>
-
-          <!-- Username field -->
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Username</label>
-            <input type="text" v-model="accountUsername" placeholder="Username"
-              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 font-bold text-sm bg-slate-50 focus:bg-white focus:border-[#1452B9] outline-none transition-all" />
-          </div>
-
-          <!-- Password field (with show/hide visibility toggle) -->
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Kata Sandi Saat Ini</label>
-            <div class="relative">
-              <input :type="isAccountPasswordVisible ? 'text' : 'password'" v-model="accountPassword" disabled
-                class="w-full pl-4 pr-12 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-800 font-mono text-sm outline-none transition-all" />
-              <button type="button" @click="isAccountPasswordVisible = !isAccountPasswordVisible"
-                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer"
-                title="Tampilkan / Sembunyikan Kata Sandi">
-                <i :class="isAccountPasswordVisible ? 'ph-bold ph-eye-slash' : 'ph-bold ph-eye'" class="text-lg"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Messages indicators -->
-          <div v-if="accountSuccessMsg"
-            class="bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs rounded-xl p-3 font-semibold flex items-center gap-2">
-            <i class="ph-bold ph-check-circle text-base"></i>
-            <span>{{ accountSuccessMsg }}</span>
-          </div>
-
-          <!-- Choice Buttons (Simpan or Ubah Kata Sandi) -->
-          <div class="flex flex-col sm:flex-row gap-3 mt-4 pt-4 border-t border-slate-100">
-            <button type="button" @click="openChangePasswordModal"
-              class="flex-1 py-3 px-4 rounded-xl border border-amber-300 text-amber-700 bg-amber-50 hover:bg-amber-100 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all">
-              <i class="ph-bold ph-lock-key"></i>
-              <span>Ubah Kata Sandi</span>
-            </button>
-            <button type="button" @click="handleSaveAccount"
-              class="flex-1 py-3 px-4 rounded-xl bg-[#1452B9] hover:bg-blue-800 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-xs">
-              <i class="ph-bold ph-check-square"></i>
-              <span>Simpan Profil</span>
-            </button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ================= MODAL POPUP: UBAH KATA SANDI (POPUP 2 - FORM UBAH KATA SANDI) ================= -->
-    <div v-if="isChangePasswordModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <!-- Overlay -->
-      <div @click="closeChangePasswordModal" class="absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity">
-      </div>
-
-      <!-- Form Container -->
-      <div
-        class="relative bg-white rounded-3xl w-full max-w-md shadow-2xl border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-200">
-
-        <!-- Modal Header -->
-        <div class="p-6 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-          <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
-            <i class="ph-bold ph-lock-key text-[#1452B9] text-2xl"></i>
-            <span>Form Ubah Kata Sandi</span>
-          </h3>
-          <button @click="closeChangePasswordModal"
-            class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-colors">
-            <i class="ph-bold ph-x text-lg"></i>
-          </button>
-        </div>
-
-        <!-- Modal Form -->
-        <form @submit.prevent="handleUpdatePassword" class="p-6 flex flex-col gap-4">
-
-          <!-- Nama / Profile Name Info -->
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Nama Kasir (Saat Ini)</label>
-            <input type="text" v-model="accountName" disabled
-              class="w-full px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 font-bold text-sm cursor-not-allowed outline-none" />
-          </div>
-
-          <!-- Password Saat Ini -->
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Masukkan Kata Sandi Saat Ini</label>
-            <input type="password" v-model="oldPasswordInput" required placeholder="Masukkan kata sandi lama Anda"
-              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 font-medium text-sm focus:border-[#1452B9] focus:ring-1 focus:ring-blue-100 outline-none transition-all" />
-          </div>
-
-          <!-- Password Baru -->
-          <div class="flex flex-col gap-1.5">
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Masukkan Kata Sandi Baru</label>
-            <input type="password" v-model="newPasswordInput" required placeholder="Buat kata sandi baru Anda"
-              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-slate-800 font-medium text-sm focus:border-[#1452B9] focus:ring-1 focus:ring-blue-100 outline-none transition-all" />
-          </div>
-
-          <!-- Message alerts inside Change Password Modal -->
-          <div v-if="accountErrorMsg"
-            class="bg-red-50 border border-red-200 text-red-600 text-xs rounded-xl p-3 font-semibold flex items-center gap-2">
-            <i class="ph-bold ph-warning-circle text-base"></i>
-            <span>{{ accountErrorMsg }}</span>
-          </div>
-
-          <div v-if="accountSuccessMsg"
-            class="bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs rounded-xl p-3 font-semibold flex items-center gap-2">
-            <i class="ph-bold ph-check-circle text-base"></i>
-            <span>{{ accountSuccessMsg }}</span>
-          </div>
-
-          <!-- Modal Actions -->
-          <div class="flex gap-3 mt-4 pt-4 border-t border-slate-100">
-            <button type="button" @click="closeChangePasswordModal"
-              class="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-sm transition-all">
-              Batal
-            </button>
-            <button type="submit"
-              class="flex-1 py-3 rounded-xl bg-[#1452B9] hover:bg-[#0f3fa0] text-white font-bold text-sm transition-all shadow-xs">
-              Simpan Password
-            </button>
-          </div>
-        </form>
-
-      </div>
-    </div>
-
-    <!-- ================= MODAL POPUP: FILTER PERIODE LAPORAN ================= -->
-    <div v-if="isFilterModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <!-- Overlay -->
-      <div @click="isFilterModalOpen = false" class="absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity">
-      </div>
-
-      <!-- Form Container -->
-      <div
-        class="relative bg-white rounded-3xl w-full max-w-md shadow-2xl border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-200">
-
-        <!-- Modal Header -->
-        <div class="p-6 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-          <h3 class="text-lg font-black text-slate-900 flex items-center gap-2">
-            <i class="ph-bold ph-calendar-blank text-[#1452B9] text-2xl"></i>
-            <span>Filter Periode Laporan</span>
-          </h3>
-          <button @click="isFilterModalOpen = false"
-            class="p-1.5 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-700 transition-colors">
-            <i class="ph-bold ph-x text-lg"></i>
-          </button>
-        </div>
-
-        <!-- Modal Body -->
-        <div class="p-6 flex flex-col gap-5">
-          <!-- Period Options -->
-          <div class="flex flex-col gap-2">
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Pilih Periode</label>
-            <div class="grid grid-cols-2 gap-2">
-              <button v-for="type in ['Semua', 'Hari', 'Tanggal', 'Bulan']" :key="type"
-                @click="laporanFilterType = type" :class="[
-                    'py-3 px-4 rounded-xl text-xs font-bold border transition-all text-center cursor-pointer',
-                    laporanFilterType === type 
-                      ? 'bg-[#1452B9] border-[#1452B9] text-white shadow-xs' 
-                      : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
-                  ]">
-                <span v-if="type === 'Semua'">Semua Transaksi</span>
-                <span v-else-if="type === 'Hari'">Hari Ini</span>
-                <span v-else-if="type === 'Tanggal'">Pilih Tanggal</span>
-                <span v-else-if="type === 'Bulan'">Pilih Bulan</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Conditional inputs -->
-          <div v-if="laporanFilterType === 'Tanggal'"
-            class="flex flex-col gap-2 animate-in fade-in slide-in-from-top-1 duration-150">
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Pilih Tanggal Riwayat</label>
-            <input type="date" v-model="laporanSelectedDate"
-              class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-[#1452B9] focus:ring-1 focus:ring-blue-100" />
-          </div>
-
-          <div v-if="laporanFilterType === 'Bulan'"
-            class="flex flex-col gap-2 animate-in fade-in slide-in-from-top-1 duration-150">
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide">Pilih Bulan Riwayat</label>
-            <input type="month" v-model="laporanSelectedMonth"
-              class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 outline-none focus:border-[#1452B9] focus:ring-1 focus:ring-blue-100" />
-          </div>
-
-          <!-- Modal Actions -->
-          <div class="flex gap-3 mt-4 pt-4 border-t border-slate-100">
-            <button type="button" @click="isFilterModalOpen = false"
-              class="flex-1 py-3 rounded-xl bg-[#1452B9] text-white hover:bg-blue-800 font-extrabold text-xs transition-all shadow-xs text-center cursor-pointer">
-              Terapkan Filter
-            </button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ================= MODAL POPUP: KONFIRMASI HAPUS MENU ================= -->
-    <div v-if="isDeleteConfirmModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <!-- Overlay -->
-      <div @click="cancelDeleteMenu" class="absolute inset-0 bg-black/60 backdrop-blur-xs transition-opacity"></div>
-
-      <!-- Modal Container -->
-      <div
-        class="relative bg-white rounded-3xl w-full max-w-sm shadow-2xl border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-200">
-
-        <!-- Modal Body -->
-        <div class="p-6 text-center flex flex-col items-center gap-4">
-          <div
-            class="w-14 h-14 bg-red-50 text-red-600 rounded-full flex items-center justify-center text-3xl animate-bounce">
-            <i class="ph-bold ph-trash"></i>
-          </div>
-          <div>
-            <h3 class="text-base font-black text-slate-900 mb-1">Hapus Menu</h3>
-            <p class="text-xs text-slate-500 font-medium">Apakah Anda yakin ingin menghapus menu <strong
-                class="text-slate-800">"{{ menuToDelete?.name }}"</strong> dari daftar menu?</p>
-          </div>
-
-          <!-- Modal Actions -->
-          <div class="flex gap-3 w-full border-t border-slate-100 pt-4 mt-2">
-            <button type="button" @click="cancelDeleteMenu"
-              class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all cursor-pointer border border-slate-200">
-              Tidak, Batal
-            </button>
-            <button type="button" @click="executeDeleteMenu"
-              class="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs transition-all shadow-xs cursor-pointer">
-              Ya, Hapus
-            </button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ================= RECEIPT MODAL: BUKTI TRANSAKSI ================= -->
-    <div v-if="isReceiptModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <!-- Overlay -->
-      <div class="absolute inset-0 bg-black/60 backdrop-blur-xs"></div>
-
-      <!-- Receipt Card -->
-      <div
-        class="relative bg-white rounded-3xl w-full max-w-sm shadow-2xl p-6 border border-slate-100 flex flex-col gap-5 animate-in zoom-in-95 duration-200 font-mono">
-
-        <!-- Seal Design -->
-        <div class="text-center flex flex-col items-center gap-1">
-          <div
-            class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-2xl mb-1">
-            <i class="ph-bold ph-check-circle"></i>
-          </div>
-          <h3 class="text-lg font-bold text-slate-900 uppercase tracking-widest">TRANSAKSI SELESAI</h3>
-          <p class="text-[11px] text-slate-500 font-sans">RUMAH MAKAN IBU</p>
-          <p class="text-[9px] text-slate-400 font-sans">Kav. 12, Jakarta Selatan</p>
-        </div>
-
-        <div class="border-t border-dashed border-slate-200 pt-3 flex flex-col gap-1 text-[11px] text-slate-600">
-          <div class="flex justify-between">
-            <span>No. Transaksi:</span>
-            <span class="font-bold text-slate-800">{{ lastCompletedTransaction.id }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span>Tanggal / Jam:</span>
-            <span>{{ lastCompletedTransaction.date }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span>Meja:</span>
-            <span class="font-bold text-slate-800">Meja {{ lastCompletedTransaction.tableNo }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span>Kasir:</span>
-            <span>Admin</span>
-          </div>
-        </div>
-
-        <div class="border-t border-dashed border-slate-200 my-1"></div>
-
-        <!-- Items Table -->
-        <div class="flex flex-col gap-2 max-h-[120px] overflow-y-auto pr-1">
-          <div v-for="item in lastCompletedTransaction.items" :key="item.menuId"
-            class="flex justify-between text-xs text-slate-700">
-            <div class="flex flex-col max-w-[180px]">
-              <span class="font-bold text-slate-800 line-clamp-1 font-sans">{{ item.name }}</span>
-              <span class="text-[10px] text-slate-400">{{ item.quantity }} x {{ formatRupiah(item.price) }}</span>
-            </div>
-            <span class="font-bold text-slate-900">{{ formatRupiah(item.price * item.quantity) }}</span>
-          </div>
-        </div>
-
-        <div class="border-t border-dashed border-slate-200 pt-3 flex flex-col gap-1.5 text-xs">
-          <div class="flex justify-between font-bold text-slate-900 text-sm">
-            <span>TOTAL</span>
-            <span>{{ formatRupiah(lastCompletedTransaction.amount) }}</span>
-          </div>
-          <div class="flex justify-between text-slate-600">
-            <span>Metode:</span>
-            <span class="font-bold uppercase">{{ lastCompletedTransaction.paymentMethod }}</span>
-          </div>
-          <div class="flex justify-between text-slate-600">
-            <span>Nominal Bayar:</span>
-            <span>{{ formatRupiah(lastCompletedTransaction.nominalPaid) }}</span>
-          </div>
-          <div class="flex justify-between font-bold text-emerald-600 border-t border-slate-100 pt-1.5">
-            <span>KEMBALIAN</span>
-            <span>{{ formatRupiah(lastCompletedTransaction.change) }}</span>
-          </div>
-        </div>
-
-        <div class="border-t border-dashed border-slate-200 pt-3 flex flex-col gap-2">
-          <button @click="printReceipt"
-            class="w-full py-3 bg-[#1452B9] hover:bg-blue-800 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all font-sans flex items-center justify-center gap-2 shadow-xs">
-            <i class="ph-bold ph-printer text-sm"></i>
-            <span>Cetak Struk Kasir</span>
-          </button>
-          <button @click="closeReceiptModal"
-            class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold uppercase tracking-wider rounded-xl transition-colors font-sans">
-            Tutup & Selesai
-          </button>
-        </div>
-
-      </div>
-    </div>
-
   </div>
 
-  <!-- Vue.js 3 entry point -->
-  <script type="module" src="./src/main.js"></script>
+  <!-- ================= VUE.JS ENTRY POINT ================= -->
+  <script src="./src/app.js"></script>
 </body>
 
 </html>
