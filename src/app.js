@@ -48,7 +48,7 @@ const App = {
     const currentDateTime = ref(new Date());
     const paymentMethod = ref('Tunai'); // 'Tunai', 'QRIS', 'Debit'
     const nominalInput = ref(''); // Raw string inputted by cashier
-    
+
     // Receipt popup trigger
     const isReceiptModalOpen = ref(false);
     const lastCompletedTransaction = ref({
@@ -107,6 +107,8 @@ const App = {
     });
 
     // --- INITIALIZATION & LIFECYCLE ---
+    let timer = null;
+
     onMounted(async () => {
       // Check checkLoggedInState
       const sessionUser = localStorage.getItem('easypos_session');
@@ -125,26 +127,27 @@ const App = {
       window.addEventListener('resize', checkViewport);
 
       // Start Clock ticker
-      const timer = setInterval(() => {
+      timer = setInterval(() => {
         currentDateTime.value = new Date();
       }, 1000);
 
       // Close dropdowns if click outside
       window.addEventListener('click', handleOutsideClick);
+    });
 
-      // Save timer for unmount
-      onBeforeUnmount(() => {
+    onBeforeUnmount(() => {
+      if (timer) {
         clearInterval(timer);
-        window.removeEventListener('resize', checkViewport);
-        window.removeEventListener('click', handleOutsideClick);
-      });
+      }
+      window.removeEventListener('resize', checkViewport);
+      window.removeEventListener('click', handleOutsideClick);
     });
 
     const loadInitialData = async () => {
       try {
         menus.value = (await apiService.getMenus()) || [];
         transactionHistory.value = (await apiService.getTransactions()) || [];
-        
+
         // Load Account info
         const acc = await apiService.getAccountInfo();
         if (acc) {
@@ -248,7 +251,7 @@ const App = {
         accountName.value = acc.name;
         accountUsername.value = acc.username;
         accountPassword.value = acc.password;
-        
+
         isAccountModalOpen.value = true;
         isChangePasswordModalOpen.value = false;
         accountSuccessMsg.value = '';
@@ -326,11 +329,11 @@ const App = {
 
     const currentFormattedDateTime = computed(() => {
       const d = currentDateTime.value;
-      const dateStr = String(d.getDate()).padStart(2, '0') + '/' + 
-                      String(d.getMonth() + 1).padStart(2, '0') + '/' + 
-                      d.getFullYear();
-      const timeStr = String(d.getHours()).padStart(2, '0') + ':' + 
-                      String(d.getMinutes()).padStart(2, '0');
+      const dateStr = String(d.getDate()).padStart(2, '0') + '/' +
+        String(d.getMonth() + 1).padStart(2, '0') + '/' +
+        d.getFullYear();
+      const timeStr = String(d.getHours()).padStart(2, '0') + ':' +
+        String(d.getMinutes()).padStart(2, '0');
       return `${dateStr} ${timeStr}`;
     });
 
@@ -385,6 +388,13 @@ const App = {
 
     const closeAddMenuModal = () => {
       isAddMenuModalOpen.value = false;
+    };
+
+    const chooseMenuImage = async () => {
+      const url = prompt('Masukkan URL foto menu (biarkan kosong untuk menggunakan gambar default):', newMenu.image || '');
+      if (url !== null) {
+        newMenu.image = url.trim() || 'https://images.unsplash.com/photo-1512058564366-18510be2db19?w=500&auto=format&fit=crop&q=60';
+      }
     };
 
     const submitAddMenu = async () => {
@@ -545,11 +555,11 @@ const App = {
       const summaryStr = summaryParts.join(', ');
 
       const d = new Date();
-      const dateStr = String(d.getDate()).padStart(2, '0') + '/' + 
-                      String(d.getMonth() + 1).padStart(2, '0') + '/' + 
-                      d.getFullYear();
-      const timeStr = String(d.getHours()).padStart(2, '0') + ':' + 
-                      String(d.getMinutes()).padStart(2, '0');
+      const dateStr = String(d.getDate()).padStart(2, '0') + '/' +
+        String(d.getMonth() + 1).padStart(2, '0') + '/' +
+        d.getFullYear();
+      const timeStr = String(d.getHours()).padStart(2, '0') + ':' +
+        String(d.getMinutes()).padStart(2, '0');
       const transactionDate = `${dateStr} ${timeStr}`;
 
       // Save complete receipt data
@@ -578,7 +588,7 @@ const App = {
         await apiService.createTransaction(txRecord);
         // Reload transactions from API to keep state synchronized perfectly!
         transactionHistory.value = await apiService.getTransactions();
-        
+
         // Trigger receipt popup
         isReceiptModalOpen.value = true;
       } catch (err) {
@@ -588,7 +598,7 @@ const App = {
 
     const closeReceiptModal = () => {
       isReceiptModalOpen.value = false;
-      
+
       // Clear cart & Reset inputs
       cart.value = [];
       selectedTable.value = '';
@@ -623,16 +633,16 @@ const App = {
       if (laporanFilterType.value === 'Semua') {
         return history;
       }
-      
+
       if (laporanFilterType.value === 'Hari') {
         // Ambil transaksi hari ini berdasarkan tanggal DD/MM/YYYY
         const today = new Date();
-        const todayStr = String(today.getDate()).padStart(2, '0') + '/' + 
-                         String(today.getMonth() + 1).padStart(2, '0') + '/' + 
-                         today.getFullYear();
+        const todayStr = String(today.getDate()).padStart(2, '0') + '/' +
+          String(today.getMonth() + 1).padStart(2, '0') + '/' +
+          today.getFullYear();
         return history.filter(tx => tx && tx.date && tx.date.startsWith(todayStr));
       }
-      
+
       if (laporanFilterType.value === 'Tanggal') {
         if (!laporanSelectedDate.value) return history;
         // Format laporanSelectedDate: YYYY-MM-DD -> ubah ke DD/MM/YYYY
@@ -641,7 +651,7 @@ const App = {
         const dateStr = `${parts[2]}/${parts[1]}/${parts[0]}`;
         return history.filter(tx => tx && tx.date && tx.date.startsWith(dateStr));
       }
-      
+
       if (laporanFilterType.value === 'Bulan') {
         if (!laporanSelectedMonth.value) return history;
         // Format laporanSelectedMonth: YYYY-MM -> ubah ke MM/YYYY
@@ -653,7 +663,7 @@ const App = {
           return tx && tx.date && tx.date.length >= 10 && tx.date.substring(3, 10) === monthStr;
         });
       }
-      
+
       return history;
     });
 
@@ -937,6 +947,7 @@ const App = {
       activePage,
       isSidebarOpen,
       isMobile,
+      filteredMenus,
       isMobileCartOpen,
       isDeleteMode,
       isAddMenuModalOpen,
@@ -999,6 +1010,7 @@ const App = {
       isPaymentExecutable,
       confirmPayment,
       closeReceiptModal,
+      chooseMenuImage,
 
       // Analytics
       totalIncomeToday,
